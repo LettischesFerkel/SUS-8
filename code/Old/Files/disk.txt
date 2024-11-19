@@ -1,0 +1,24 @@
+load "sus.amogus" 0
+load "sus.amogus" 1
+load "sus.amogus" 2 3
+load "sus.amogus" 3 2
+print ram 128 255
+assemble sus "mov" ""
+assemble sus "jmp sus amogus" "sussy"
+assemble sus "mov a b" "sussy"
+assemble sus "imm b 14" "sussy"
+"-69" "-0d69" "-0x69" "0x10" "0b1010"
+
+assemble sus "program.bin" "Files/new.sus"
+load "program.bin" 0
+print ram 0 63
+
+backup load "Files/sus.amogus"
+step 256
+run
+
+assemble sus "Files/fibonacci.bin" "Files/Programs/fibonacci.sus"
+load "Files/fibonacci.bin" 0
+print ram 0 15
+step 16
+run

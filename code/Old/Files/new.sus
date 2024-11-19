@@ -1,0 +1,64 @@
+nop
+halt
+ioportsetr
+ioportget
+in c
+in d
+out c
+out d
+ioportseti 0
+ioportseti 1
+ioportseti 2
+ioportseti 3
+ioportseti 4
+ioportseti 5
+ioportseti 6
+ioportseti 7
+send
+desend
+receive
+sportsetr
+sportseti 0
+sportseti 1
+sout c
+sout d
+sin c
+sin d
+buffersetr
+bufferget
+irenable
+irdisable
+irsource
+irreturn
+bufferseti 0
+bufferseti 1
+bufferseti 2
+bufferseti 3
+bufferseti 4
+bufferseti 5
+bufferseti 6
+bufferseti 7
+bufferseti 8
+bufferseti 9
+bufferseti 10
+bufferseti 11
+bufferseti 12
+bufferseti 13
+bufferseti 14
+bufferseti 15
+irset
+irget
+irout
+fpmove
+fpset
+fpget
+spset
+spget
+save a
+save b
+save c
+save d
+load a
+load b
+load c
+load d

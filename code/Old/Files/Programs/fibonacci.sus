@@ -1,0 +1,14 @@
+ioportseti 0
+imm b 8
+mov b d
+imm b 1
+out c
+alu add
+out c
+out c
+mov b a
+mov c b
+alu add
+out c
+jmp nz
+halt

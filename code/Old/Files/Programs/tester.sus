@@ -1,0 +1,8 @@
+mov a a
+nop
+mov a b
+mov b a
+nop
+mov b d
+mov d b
+halt

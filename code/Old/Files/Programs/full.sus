@@ -1,0 +1,256 @@
+nop
+halt
+ioportsetr
+ioportget
+in c
+in d
+out c
+out d
+ioportseti 0
+ioportseti 1
+ioportseti 2
+ioportseti 3
+ioportseti 4
+ioportseti 5
+ioportseti 6
+ioportseti 7
+send
+desend
+receive
+sportsetr
+sportseti 0
+sportseti 1
+sout c
+sout d
+sin c
+sin d
+buffersetr
+bufferget
+irenable
+irdisable
+irsource
+irreturn
+bufferseti 0
+bufferseti 1
+bufferseti 2
+bufferseti 3
+bufferseti 4
+bufferseti 5
+bufferseti 6
+bufferseti 7
+bufferseti 8
+bufferseti 9
+bufferseti 10
+bufferseti 11
+bufferseti 12
+bufferseti 13
+bufferseti 14
+bufferseti 15
+irset
+irget
+irout
+fpmove
+fpset
+fpget
+spset
+spget
+save a
+save b
+save c
+save d
+load a
+load b
+load c
+load d
+gaset e
+mov a b
+mov a c
+mov a d
+mov a e
+mov a f
+mov a g
+mov a h
+mov b a
+gaset f
+mov b c
+mov b d
+mov b e
+mov b f
+mov b g
+mov b h
+mov c a
+mov c b
+gaget e
+mov c d
+mov c e
+mov c f
+mov c g
+mov c h
+mov d a
+mov d b
+mov d c
+gaget f
+mov d e
+mov d f
+mov d g
+mov d h
+mov e a
+mov e b
+mov e c
+mov e d
+oaset e
+mov e f
+mov e g
+mov e h
+mov f a
+mov f b
+mov f c
+mov f d
+mov f e
+oaset f
+mov f g
+mov f h
+mov g a
+mov g b
+mov g c
+mov g d
+mov g e
+mov g f
+oaget e
+mov g h
+mov h a
+mov h b
+mov h c
+mov h d
+mov h e
+mov h f
+mov h g
+oaget f
+oaadd 0
+oaadd 1
+oaadd 2
+oaadd 3
+oaadd 4
+oaadd 5
+oaadd 6
+oaadd 7
+oaadd 8
+oaadd 9
+oaadd 10
+oaadd 11
+oaadd 12
+oaadd 13
+oaadd 14
+oaadd 15
+oaadd 16
+oaadd 17
+oaadd 18
+oaadd 19
+oaadd 20
+oaadd 21
+oaadd 22
+oaadd 23
+oaadd 24
+oaadd 25
+oaadd 26
+oaadd 27
+oaadd 28
+oaadd 29
+oaadd 30
+oaadd 31
+oaadd 32
+oaadd 33
+oaadd 34
+oaadd 35
+oaadd 36
+oaadd 37
+oaadd 38
+oaadd 39
+oaadd 40
+oaadd 41
+oaadd 42
+oaadd 43
+oaadd 44
+oaadd 45
+oaadd 46
+oaadd 47
+oaadd 48
+oaadd 49
+oaadd 50
+oaadd 51
+oaadd 52
+oaadd 53
+oaadd 54
+oaadd 55
+oaadd 56
+oaadd 57
+oaadd 58
+oaadd 59
+oaadd 60
+oaadd 61
+oaadd 62
+oaadd 63
+imm a 0
+imm a 1
+imm a 2
+imm a 3
+imm a 4
+imm a 5
+imm a 6
+imm a 7
+imm a 8
+imm a 9
+imm a 10
+imm a 11
+imm a 12
+imm a 13
+imm a 14
+imm a 15
+imm b 0
+imm b 1
+imm b 2
+imm b 3
+imm b 4
+imm b 5
+imm b 6
+imm b 7
+imm b 8
+imm b 9
+imm b 10
+imm b 11
+imm b 12
+imm b 13
+imm b 14
+imm b 15
+frset
+frget
+push e
+push f
+pop e
+pop f
+call
+return
+jmp
+jmp
+jmp z
+jmp nz
+jmp s
+jmp ns
+jmp reg
+jmp nreg
+alu and
+alu or
+alu xor
+alu add
+alu sub
+alu cmp
+alu not
+alu incr
+alu shlr
+alu shl1
+alu shl2
+alu shl4
+alu shrr
+alu shr1
+alu shr2
+alu shr4

@@ -1,0 +1,26 @@
+oaadd 0
+oaadd 64
+oaadd 72
+oaadd -40
+oaadd 0b10110100
+nop
+imm a 14
+halt
+
+
+
+
+
+
+
+nop
+nop
+jmp nz
+alu add
+imm a 14
+
+oaadd -16
+halt
+
+
+
