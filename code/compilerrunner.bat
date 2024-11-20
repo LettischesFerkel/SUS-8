@@ -1,3 +1,3 @@
 @echo off
-gcc main.c -Wall -pedantic --version -o build\main
+gcc main.c -Wall -pedantic -o build\main
 .\build\main test
