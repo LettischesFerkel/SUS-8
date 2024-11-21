@@ -1,19 +1,21 @@
 #include <stdio.h>
+#include <math.h>
 
-#define _CONSOLE_COMMAND_COUNT 8
-#define _CONSOLE_COMMAND_MAX_LENGTH 12
-#define _CONSOLE_COMMAND_ARGUMENT_COUNT 2
-#define _CONSOLE_COMMAND_ARGUMENT_SIZE 8
+#define _CONSOLE_COMMAND_COUNT 9
+#define _CONSOLE_COMMAND_MAX_LENGTH 8
+#define _CONSOLE_COMMAND_ARGUMENT_COUNT 3
+#define _CONSOLE_COMMAND_ARGUMENT_SIZE 8 //must be 0 at mod(4)
 char CONSOLE_COMMANDS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_MAX_LENGTH] = 
 {
-    "exit      "
-    "nigger     "
-    "halt       "
-    "bruh       "
-    "           "
-    "           "
-    "           "
-    "           "
+    "exit    "
+    "help    "
+    "save    "
+    "load    "
+    "print   "
+    "status  "
+    "step    "
+    "run     "
+    "evaluate"
 };
 void* CONSOLE_COMMAND_FUNCTION_POINTERS[_CONSOLE_COMMAND_COUNT];
 /*
@@ -24,11 +26,74 @@ void* CONSOLE_COMMAND_FUNCTION_POINTERS[_CONSOLE_COMMAND_COUNT];
 */
 char CONSOLE_COMMAND_ARGUMENT_FORMATS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_ARGUMENT_COUNT] = 
 {
-    'c',  '\0', // black
-    's',  'n' , // nigger
-    'n',  '\0', // halt
-    '\0', '\0'  // bruh
+    '\0', '\0', '\0', // exit
+    's',  '\0', '\0', // help
+    's',  'n',  'n',  // save
+    's',  'n',  'n',  // load
+    's',  's',  's',  // print
+    '\0', '\0', '\0', // status
+    's',  'n',  '\0', // step
+    'n',  '\0', '\0', // run
+    's',  '\0', '\0'  // evaluate
 };
+
+int parseIntFromString(char* string, int stringLength)
+{
+    int num = 0;
+    int power = -1;
+    int negative = 0;
+    int base = 10; // d:10 b:2 x:16
+    
+    // determine base and negativity
+    for (int i = 0; i < stringLength; i++)
+    {
+        char current = *(string + i);
+        char lefter = (i == 0) ? ('\0') : (*(string + i - 1));
+        switch (current)
+        {
+            case 'd':
+                if (lefter == '0') { base = 10; }
+                break;
+            case 'b':
+                if (lefter == '0') { base = 2; }
+                break;
+            case 'x':
+                if (lefter == '0') { base = 16; }
+                break;
+            case '-':
+                negative = !negative;
+                break;
+            default:
+                break;
+        }
+    }
+    //printf("Number is negative: %d base %d\n", negative, base);
+
+    // calculate the value
+    for (int i = (stringLength - 1); i >= 0; i--)
+    {
+        char current = *(string + i);
+        char digit = 0;
+
+        switch (base)
+        {
+            case 2:
+                if ((current >= 48) && (current <= 57)) { digit = current - 48; power++; }
+                break;
+            case 10:
+                if ((current >= 48) && (current <= 57)) { digit = current - 48; power++; }
+                break;
+            case 16:
+                if ((current >= 48) && (current <= 57)) { digit = current - 48; power++; }
+                else if ((current >= 65) && (current <= 70)) { digit = current - 55; power++; }
+                else if ((current >= 97) && (current <= 102)) { digit = current - 87; power++; }
+                break;
+        }
+        if (digit >= base) { printf("Warning: Incorrect number representation for base %d!\n", base); return 0; }
+        num += digit * pow(base, power);
+    }
+    return num * (negative ? -1 : 1);
+}
 
 void clearString(char* string, int length)
 {
@@ -122,7 +187,7 @@ int decodeCommand(char* input, int inputLength, char* tokens, char* commands, in
         char current = *(input + i);
         for (int c = 0; c < commandCount; c++)
         {
-            if (suspects[c]) { suspects[c] = (current == *(commands + ((commandLength - 1) * c) + suspectI)); if (!suspects[c]) { suspectCount--; } }
+            if (suspects[c]) { suspects[c] = (current == *(commands + (commandLength * c) + suspectI)); if (!suspects[c]) { suspectCount--; } }
         }
     }
     if (suspectCount == 0) { printf("Warning: No commands match!\n"); return -1; }
@@ -134,8 +199,9 @@ int decodeCommand(char* input, int inputLength, char* tokens, char* commands, in
     return 0;
 }
 
-int decodeArgs(char* input, int inputLength, int command, char* argumentFormats, int commandCount, int argumentCount, void* data, int dataLength) // masīvs ar komandu tipiem, veidiem un argumentu formatēšanu, atgriež funkcijas prototipu
+int decodeArgs(char* input, int inputLength, char* tokens, int command, char* argumentFormats, int commandCount, int argumentCount, void* data, int argumentSize, char cosmetic) // masīvs ar komandu tipiem, veidiem un argumentu formatēšanu, atgriež funkcijas prototipu
 {
+    // load command argument formatting
     char formats[argumentCount];
     for (int i = 0; i < argumentCount; i++) { formats[i] = *(argumentFormats + (argumentCount * command) + i); }
 
@@ -144,8 +210,42 @@ int decodeArgs(char* input, int inputLength, int command, char* argumentFormats,
     for (int i = 0; i < argumentCount; i++) { printf("%c ", formats[i]); }
     printf("\n");
 
+    // check if any format present
     if (!formats[0]) { return 0; }
+    int arguments = 0;
+    for (int i = 0; i < argumentCount; i++) { if (formats[i]) { arguments++; } }
 
+    // clear output data
+    for (int i = 0; i < (argumentCount * argumentSize) - 1; i++) { *((char*)data + i) = (cosmetic ? ' ' : '\0'); } // jābūt \0
+    *((char*)data + (argumentCount * argumentSize) - 1) = '\0';
+
+    // load arguments
+    int arg = 0;
+    int offset = 0;
+    int newArg = 1;
+    for (int i = 0; i < inputLength; i++)
+    {
+        if (*(tokens + i) > 1 + (48 * cosmetic)) { if (offset < argumentSize) { *((char*)data + (argumentSize * arg) + offset) = *(input + i); offset++; } newArg = 0; }
+        else if (cosmetic && (*(tokens + i) == ' ')) { if (!newArg) { arg++; offset = 0; newArg = 1; } }
+        else if (*(tokens + i) == 0) { if (!newArg) { arg++; offset = 0; newArg = 1; } }
+        if (arg == arguments) { break; }
+    }
+    printf("Args: '%s'\n", (char*)data);
+
+    // parse arguments
+    for (int i = 0; i < argumentCount; i++)
+    {
+        if (formats[i] == 'n')
+        {
+            int num = parseIntFromString((char*)data + (argumentSize * i), argumentSize); // normal parsing
+            //printf("%dth num: %d\n", i, num);
+
+            *((int*)data + ((argumentSize >> 2) * i)) = num; // trust me bro, it is only slightly unsafe and absolutely does not work : iespējams error by 1 adrešu aritmētikā
+            
+            for (int n = 0; n < argumentSize; n++) { printf("%d ", *((char*)data + (argumentSize * i) + n)); }
+        }
+        printf("\n");
+    }
 
     return 0;
 }
