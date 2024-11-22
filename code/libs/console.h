@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#define _CONSOLE_COMMAND_COUNT 9
+#define _CONSOLE_COMMAND_COUNT 10
 #define _CONSOLE_COMMAND_MAX_LENGTH 8
 #define _CONSOLE_COMMAND_ARGUMENT_COUNT 3
 #define _CONSOLE_COMMAND_ARGUMENT_SIZE 8 //must be 0 at mod(4)
@@ -16,6 +16,7 @@ char CONSOLE_COMMANDS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_MAX_LENGTH] =
     "step    "
     "run     "
     "evaluate"
+    "git    "
 };
 void* CONSOLE_COMMAND_FUNCTION_POINTERS[_CONSOLE_COMMAND_COUNT];
 /*
@@ -34,7 +35,8 @@ char CONSOLE_COMMAND_ARGUMENT_FORMATS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_
     '\0', '\0', '\0', // status
     's',  'n',  '\0', // step
     'n',  '\0', '\0', // run
-    's',  '\0', '\0'  // evaluate
+    's',  '\0', '\0', // evaluate
+    's',  'n',  '\0'  //git
 };
 
 int parseIntFromString(char* string, int stringLength)
