@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include "libs/console.h"
 
-#define _INPUT_BUFFER_LENGTH 64
-char INPUT_BUFFER[64];
-
 char TEST_MODE = 0;
 
 
@@ -36,11 +33,16 @@ int main(int argc, char* args[])
         clearString(INPUT_BUFFER, _INPUT_BUFFER_LENGTH);
         fgets(INPUT_BUFFER, _INPUT_BUFFER_LENGTH, stdin);
 
+        /*// Clear input from escape characters and quotes
+        removeQuotes(INPUT_BUFFER, _INPUT_BUFFER_LENGTH, 1, 0, 0);
+        parseEscapeCharacters(INPUT_BUFFER, _INPUT_BUFFER_LENGTH, 1, (char*)0);
+        printf("Buf:%s\n", INPUT_BUFFER);*/
+
         // Tokenise input
         char tokens[_INPUT_BUFFER_LENGTH];
         int argcount = tokeniseString(INPUT_BUFFER, _INPUT_BUFFER_LENGTH, tokens, TEST_MODE);
         if (!argcount) { continue; }
-        //printf("  %s\nArgcount: %d\n", tokens, argcount);
+        printf("    %s\nArgcount: %d\n", tokens, argcount);
         /*
         for (int i = 0; i < _INPUT_BUFFER_LENGTH; i++) { printf("%2x ", tokens[i]); }
         printf("\n");*/
@@ -53,5 +55,9 @@ int main(int argc, char* args[])
         // Decode command arguments
         char argdata[_CONSOLE_COMMAND_ARGUMENT_COUNT * _CONSOLE_COMMAND_ARGUMENT_SIZE];
         decodeArgs(INPUT_BUFFER, _INPUT_BUFFER_LENGTH, tokens, command, CONSOLE_COMMAND_ARGUMENT_FORMATS, _CONSOLE_COMMAND_COUNT, _CONSOLE_COMMAND_ARGUMENT_COUNT, argdata, _CONSOLE_COMMAND_ARGUMENT_SIZE, TEST_MODE);
+
+        // Run command
+        runCommand(command, CONSOLE_COMMAND_ARGUMENT_FORMATS, _CONSOLE_COMMAND_COUNT, _CONSOLE_COMMAND_ARGUMENT_COUNT, argdata, _CONSOLE_COMMAND_ARGUMENT_SIZE, TEST_MODE);
+         // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
     }
 }

@@ -4,7 +4,9 @@
 #define _CONSOLE_COMMAND_COUNT 10
 #define _CONSOLE_COMMAND_MAX_LENGTH 8
 #define _CONSOLE_COMMAND_ARGUMENT_COUNT 3
-#define _CONSOLE_COMMAND_ARGUMENT_SIZE 8 //must be 0 at mod(4)
+#define _CONSOLE_COMMAND_ARGUMENT_SIZE 64 //must be 0 at mod(4)
+#define _INPUT_BUFFER_LENGTH 256
+char INPUT_BUFFER[_INPUT_BUFFER_LENGTH];
 char CONSOLE_COMMANDS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_MAX_LENGTH] = 
 {
     "exit    "
@@ -36,7 +38,7 @@ char CONSOLE_COMMAND_ARGUMENT_FORMATS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_
     's',  'n',  '\0', // step
     'n',  '\0', '\0', // run
     's',  '\0', '\0', // evaluate
-    's',  'n',  '\0'  //git
+    's',  'n',  '\0'  // git
 };
 
 int parseIntFromString(char* string, int stringLength)
@@ -95,6 +97,179 @@ int parseIntFromString(char* string, int stringLength)
         num += digit * pow(base, power);
     }
     return num * (negative ? -1 : 1);
+}
+// parses all escape character sequences supported by the GNU C compiler collection standards, except octal and unicode.
+// returns count of parsed escape character sequences.
+// output used if !parseinplace
+ // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
+int parseEscapeCharacters(char* string, int stringLength, char parseinplace, char* output) // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
+{
+    char escapeCharacter = 0;
+    int offset = 0;
+    int hex = 0;
+    char hexnum[5] = "0x00";
+    //int oct = 0; // not implemented
+    int escapeCharacterCount = 0;
+    for (int i = 0; i < stringLength; i++)
+    {
+        char current = *(string + i);
+        if (escapeCharacter)
+        {
+            if (hex)
+            {
+                if (((current >= 48) && (current <= 57)) || ((current >= 65) && (current <= 70)) || ((current >= 97) && (current <= 102))) // acceptable hexadecimal digit
+                {
+                    hexnum[4 - hex] = current;
+                }
+                else
+                {
+                    printf("Warning: Nonacceptable hexadecimal digit for escape character sequence '%c'!\n", current);
+                }
+                hex--;
+                if (!hex)
+                {
+                    if (parseinplace) { *(string + i - 1 + offset) = parseIntFromString(hexnum, 4); }
+                    else { *(output + i - 1 + offset) = parseIntFromString(hexnum, 4); }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                }
+                offset--;
+                continue;
+            }
+            switch (current)
+            {
+                case 'a':
+                    //*(string + i - 1 + offset) = 0x07;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x07; }
+                    else { *(output + i - 1 + offset) = 0x07; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 'b':
+                    //*(string + i - 1 + offset) = 0x08;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x08; }
+                    else { *(output + i - 1 + offset) = 0x08; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 'e':
+                    //*(string + i - 1 + offset) = 0x1B;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x1B; }
+                    else { *(output + i - 1 + offset) = 0x1B; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 'f':
+                    //*(string + i - 1 + offset) = 0x0C;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x0C; }
+                    else { *(output + i - 1 + offset) = 0x0C; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 'n':
+                    //*(string + i - 1 + offset) = 0x0A;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x0A; }
+                    else { *(output + i - 1 + offset) = 0x0A; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 'r':
+                    //*(string + i - 1 + offset) = 0x0D;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x0D; }
+                    else { *(output + i - 1 + offset) = 0x0D; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 't':
+                    //*(string + i - 1 + offset) = 0x09;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x09; }
+                    else { *(output + i - 1 + offset) = 0x09; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 'v':
+                    //*(string + i - 1 + offset) = 0x0B;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x0B; }
+                    else { *(output + i - 1 + offset) = 0x0B; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case '\\':
+                    //*(string + i - 1 + offset) = 0x5C;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x5C; }
+                    else { *(output + i - 1 + offset) = 0x5C; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case '\'':
+                    //*(string + i - 1 + offset) = 0x27;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x27; }
+                    else { *(output + i - 1 + offset) = 0x27; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case '\"':
+                    //*(string + i - 1 + offset) = 0x22;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x22; }
+                    else { *(output + i - 1 + offset) = 0x22; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case '\?':
+                    //*(string + i - 1 + offset) = 0x3F;
+                    if (parseinplace) { *(string + i - 1 + offset) = 0x3F; }
+                    else { *(output + i - 1 + offset) = 0x3F; }
+                    escapeCharacterCount++;
+                    escapeCharacter = 0;
+                    break;
+                case 'x':
+                    hex = 2;
+                    break;
+                default:
+                    printf("Warning: Incorrent escape character sequence '\\%c'!\n", current);
+                    *(string + i - 1 + offset) = current;
+                    escapeCharacter = 0;
+                    break;
+            }
+            offset--;
+        }
+        else
+        {
+            if (current == '\\') { escapeCharacter = 1; }
+            *(string + i + offset) = current;
+        }
+    }
+    return escapeCharacterCount;
+}
+
+int removeQuotes(char* string, int stringLength, char excludeEscapeCharacters, char excludeSingle, char excludeDouble) // returns amount of quotations removed
+{
+    char escapeCharacter = 0;
+    int offset = 0;
+    for (int i = 0; i < stringLength; i++)
+    {
+        char current = *(string + i);
+        *(string + i + offset) = current;
+        switch (current)
+        {
+            case '\\':
+                if (escapeCharacter) { escapeCharacter = 0; }
+                else if (excludeEscapeCharacters) { escapeCharacter = 1; }
+                break;
+            case '\'':
+                if (escapeCharacter) { escapeCharacter = 0; }
+                else if (!excludeSingle) { offset--; }
+                break;
+            case '\"':
+                if (escapeCharacter) { escapeCharacter = 0; }
+                else if (!excludeDouble) { offset--; }
+                break;
+            default:
+                if (escapeCharacter) { escapeCharacter = 0; }
+                break;
+        }
+    }
+    return -offset;
 }
 
 void clearString(char* string, int length)
@@ -201,16 +376,16 @@ int decodeCommand(char* input, int inputLength, char* tokens, char* commands, in
     return 0;
 }
 
-int decodeArgs(char* input, int inputLength, char* tokens, int command, char* argumentFormats, int commandCount, int argumentCount, void* data, int argumentSize, char cosmetic) // masīvs ar komandu tipiem, veidiem un argumentu formatēšanu, atgriež funkcijas prototipu
+int decodeArgs(char* input, int inputLength, char* tokens, int command, char* argumentFormats, int commandCount, int argumentCount, void* data, int argumentSize, char cosmetic) // decodes and formats tokens according to command formatting
 {
     // load command argument formatting
     char formats[argumentCount];
     for (int i = 0; i < argumentCount; i++) { formats[i] = *(argumentFormats + (argumentCount * command) + i); }
 
-    printf("Command: %d\n", command);
-    printf("Arguments: ");
-    for (int i = 0; i < argumentCount; i++) { printf("%c ", formats[i]); }
-    printf("\n");
+    //printf("Command: %d\n", command);
+    //printf("Arguments: ");
+    //for (int i = 0; i < argumentCount; i++) { printf("%c ", formats[i]); }
+    //printf("\n");
 
     // check if any format present
     if (!formats[0]) { return 0; }
@@ -232,27 +407,58 @@ int decodeArgs(char* input, int inputLength, char* tokens, int command, char* ar
         else if (*(tokens + i) == 0) { if (!newArg) { arg++; offset = 0; newArg = 1; } }
         if (arg == arguments) { break; }
     }
-    printf("Args: '%s'\n", (char*)data);
+    //printf("Args: '%s'\n", (char*)data);
 
     // parse arguments
+    //printf("Num args: ");
     for (int i = 0; i < argumentCount; i++)
     {
         if (formats[i] == 'n')
         {
-            int num = parseIntFromString((char*)data + (argumentSize * i), argumentSize); // normal parsing
+            int num = parseIntFromString((char*)data + (argumentSize * i), argumentSize); // average parsing implementation
             //printf("%dth num: %d\n", i, num);
 
-            *((int*)data + ((argumentSize >> 2) * i)) = num; // trust me bro, it is only slightly unsafe and absolutely does not work : iespējams error by 1 adrešu aritmētikā
+            *((int*)data + ((argumentSize >> 2) * i)) = num; // trust me bro
             
-            for (int n = 0; n < argumentSize; n++) { printf("%d ", *((char*)data + (argumentSize * i) + n)); }
+            //for (int n = 0; n < argumentSize; n++) { printf("%d ", *((char*)data + (argumentSize * i) + n)); }
+            //printf("%d ", *((int*)data + ((argumentSize >> 2) * i)));
         }
-        printf("\n");
+        //printf("\n");
     }
 
     return 0;
 }
 
-int runCommand(/* some command function template */)
+int runCommand(int command, char* argumentFormats, int commandCount, int argumentCount, void* data, int argumentSize, char debugmode) // runs given command and arguments - large switch statement and also the only thing keeping me from making the console system fully modular.
 {
+     // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
+    switch (command)
+    {
+         // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:    // print
+            removeQuotes(data, argumentCount * argumentSize, 1, 0, 0);
+            parseEscapeCharacters(data, argumentCount * argumentSize, 1, (char*)0);
+            printf(data);
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            break;
+        case 8:
+            break;
+        case 9:
+            break;
+        
+    }
     return 0;
 }
