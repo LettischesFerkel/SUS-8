@@ -21,6 +21,7 @@ char CONSOLE_COMMANDS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_MAX_LENGTH] =
     "git    "
 };
 void* CONSOLE_COMMAND_FUNCTION_POINTERS[_CONSOLE_COMMAND_COUNT];
+void * int
 /*
     \0 - no argument
     c  - char
@@ -40,6 +41,12 @@ char CONSOLE_COMMAND_ARGUMENT_FORMATS[_CONSOLE_COMMAND_COUNT * _CONSOLE_COMMAND_
     's',  '\0', '\0', // evaluate
     's',  'n',  '\0'  // git
 };
+
+void CONSOLE_COMMAND_FUNCTION_PROTOTYPE(int COMMAND_ID, void* ARGS_DATA, int DATA_SIZE)
+{
+    printf("Default console command function protoype called!\n");
+    return;
+}
 
 int parseIntFromString(char* string, int stringLength)
 {
@@ -101,8 +108,7 @@ int parseIntFromString(char* string, int stringLength)
 // parses all escape character sequences supported by the GNU C compiler collection standards, except octal and unicode.
 // returns count of parsed escape character sequences.
 // output used if !parseinplace
- // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
-int parseEscapeCharacters(char* string, int stringLength, char parseinplace, char* output) // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
+int parseEscapeCharacters(char* string, int stringLength, char parseinplace, char* output)
 {
     char escapeCharacter = 0;
     int offset = 0;
@@ -429,36 +435,10 @@ int decodeArgs(char* input, int inputLength, char* tokens, int command, char* ar
     return 0;
 }
 
-int runCommand(int command, char* argumentFormats, int commandCount, int argumentCount, void* data, int argumentSize, char debugmode) // runs given command and arguments - large switch statement and also the only thing keeping me from making the console system fully modular.
+int runCommand(int command, int commandCount, int argumentCount, void* commandFunctionPointers, void* data, int argumentSize, char debugmode) // runs given command and arguments - large switch statement and also the only thing keeping me from making the console system fully modular.
 {
-     // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
-    switch (command)
-    {
-         // kautkas susīgs notiek, kad escape simbols tieši simbolu virknes beigās.
-        case 0:
-            break;
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:    // print
-            removeQuotes(data, argumentCount * argumentSize, 1, 0, 0);
-            parseEscapeCharacters(data, argumentCount * argumentSize, 1, (char*)0);
-            printf(data);
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-        case 7:
-            break;
-        case 8:
-            break;
-        case 9:
-            break;
-        
-    }
+    if (command >= commandCount) { if (debugmode) { printf("Warning: Command ID '%d' of '%d' out of bounds!", command, commandCount); } return -1; }
+    ((int, void*, int)(commandFunctionPointers + command))(command, data, argumentCount * argumentSize);
+    // void CONSOLE_COMMAND_FUNCTION_PROTOTYPE(int COMMAND_ID, void* ARGS_DATA, int DATA_SIZE)
     return 0;
 }
